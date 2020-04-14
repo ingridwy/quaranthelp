@@ -1,6 +1,10 @@
-<h1><%=@room.name %></h1>
-<% @room.messages.each do |message| %>
-<%= message.name %>
-<%= message.content  %>
-<%= message.created_at.strftime("%a %b %e at %l:%M%p") %>
+<h1><%= @room.name %></h1>
+<div class="messages">
+  <% @room.messages.each do |message| %>
+    <%= render 'messages/message', message: message %>
+  <% end %>
+</div>
+<%= simple_form_for [ @room, @message ], remote: true do |f| %>
+  <%= f.input :content, placeholder: "Type..." %>
+  <%= f.submit %>
 <% end %>
