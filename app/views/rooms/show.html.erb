@@ -5,6 +5,6 @@
   <% end %>
 </div>
 <%= simple_form_for [ @room, @message ], remote: true do |f| %>
-  <%= f.input :content, placeholder: "Type..." %>
+  <%= f.input :content, label:false, placeholder: "Type..." %>
   <%= f.submit %>
 <% end %>
