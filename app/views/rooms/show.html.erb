@@ -1,10 +1,26 @@
-<h1><%= @room.name %></h1>
-<div class="messages">
-  <% @room.messages.each do |message| %>
-    <%= render 'messages/message', message: message %>
+<div class= "room-container">
+  <h1><%= @room.name %></h1>
+  <div class="messages" data-room-id="<%= @room.id %>">
+    <% @room.messages.each do |message| %>
+      <%= render 'messages/message', message: message %>
+    <% end %>
+  </div>
+  <%= simple_form_for [ @room, @message ], remote: true do |f| %>
+    <%= f.input :content, label:false, placeholder: "Type..." %>
+    <%= f.submit %>
   <% end %>
 </div>
-<%= simple_form_for [ @room, @message ], remote: true do |f| %>
-  <%= f.input :content, label:false, placeholder: "Type..." %>
+<% content_for :after_js do %>
+  <script>
 
+    App['room_<%= @room.id %>'] = App.cable.subscriptions.create({ channel: 'RoomChannel', room_id: <%= @room.id %> }, {
+      received: (data) => {
+        if (data.current_user_id !== <%= current_user.id %>) {
+          const messagesContainer = document.querySelector('.messages');
+          messagesContainer.insertAdjacentHTML('beforeend', data.message_partial);
+          scrollLastMessageIntoView();
+        }
+      }
+    })
+  </script>
 <% end %>
